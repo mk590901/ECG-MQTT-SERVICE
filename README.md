@@ -1,6 +1,6 @@
 # ECG MQTT Service
 
-The application described below includes a foreground service that receives an __ECG__ signal from the same application, transmitted via an __MQTT bridge__. The builtin __MQTT client-server__ receives the data and sends it to the application for playback. The application can also act as an ECG signal generator. In this case, the generated signal is sent to the network via the __MQTT__ publish operation.
+The application described below includes a foreground service that receives an __ECG__ signal from the same application, transmitted via an __MQTT bridge__. The builtin __MQTT client-server__ receives the data and sends it to the application for playback. The application can also act as an __ECG signal generator__. In this case, the generated signal is sent to the network via the __MQTT__ publish operation.
 
 ## ECG Service Roadmap
 
