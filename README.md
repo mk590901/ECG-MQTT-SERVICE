@@ -2,7 +2,7 @@
 
 The application described below includes a foreground service that receives an __ECG__ signal from the same application, transmitted via an __MQTT bridge__. The builtin __MQTT client-server__ receives the data and sends it to the application for playback. The application can also act as an __ECG signal generator__. In this case, the generated signal is sent to the network via the __MQTT__ __publish__ operation.
 
-_The application visualizes ECG signals from both its own generators and generators running on other phones._
+> _The application visualizes ECG signals from both its own generators and generators running on other phones._
 
 Should be mentioned that the application was created gradually and below are listed the intermediate projects that became its basis.
 
