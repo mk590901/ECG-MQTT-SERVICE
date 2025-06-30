@@ -28,7 +28,7 @@ In the context of the current application, the service provides:
 
 Should be noted that items in the application list can be of two types: internal generators and external signal sources of the same application, but running on another device. This difference can be observed by a special ECG signal label containing the name of this device.
 
-In this case, the movie shows the presence of __ECG__ signals from two phones: __Google Pixel 8__ and __LGE LM-810 (LG G8 ThinQ)__.
+In this case, the movie shows the presence of __ECG__ signals from two phones: __Google Pixel 8__ and __LGE LM-G810 (LG G8 ThinQ)__.
 
 ## Movie
 
