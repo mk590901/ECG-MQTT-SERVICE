@@ -11,8 +11,8 @@ It's quite difficult to write everything right at once. Therefore, the process i
 2. ✓ Service simulation - the current project. Creation of data structures that allow simulating the receipt and display of ECG signals from multiple clients. In this case, the __service__ is not implemented. Pure imitation.
 3. ✓ From __service__ simulation to a real __service__ inside server: 3 = (1 & 2)
 4. ✓ Development Pack/Unpack ECG Signal procedures
-5. Add __MQTT__ client (like https://github.com/mk590901/mqtt_sink_agent)
-6. 6 = (3 & 4 & 5)
+5. ✓ Add __MQTT__ client (like https://github.com/mk590901/mqtt_sink_agent)
+6. ✓ 6 = (3 & 4 & 5) -> __ECG MQTT Service__
 
 ## Application Features
 
@@ -40,7 +40,6 @@ This command updates the container in the singleton __ServiceAdapter__ in the ap
 
 The movie below shows the application's operation: can add an __ECG__ signal source, remove it from the list temporarily or permanently, and also close the application without deleting the service, and re-open the application via the __notification widget__ and continue working.
 
-https://github.com/user-attachments/assets/6ecfdc79-55a7-4dec-b86f-3435a3993b3b
 
 
 
