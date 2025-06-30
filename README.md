@@ -1,6 +1,13 @@
 # ECG MQTT Service
 
-The application described below includes a foreground service that receives an __ECG__ signal from the same application, transmitted via an __MQTT bridge__. The builtin __MQTT client-server__ receives the data and sends it to the application for playback. The application can also act as an __ECG signal generator__. In this case, the generated signal is sent to the network via the __MQTT__ publish operation.
+The application described below includes a foreground service that receives an __ECG__ signal from the same application, transmitted via an __MQTT bridge__. The builtin __MQTT client-server__ receives the data and sends it to the application for playback. The application can also act as an __ECG signal generator__. In this case, the generated signal is sent to the network via the __MQTT__ __publish__ operation.
+
+Should be mentioned that the application was created gradually and below are listed the intermediate projects that became its basis.
+
+* https://github.com/mk590901/ECG-Server
+* https://github.com/mk590901/ECG-Pseudo-Service
+* https://github.com/mk590901/ECG-FB-Service
+* https://github.com/mk590901/flutter_fb_task
 
 ## Inside Application
 
