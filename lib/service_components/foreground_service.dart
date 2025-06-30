@@ -46,7 +46,6 @@ class ServiceTaskHandler extends TaskHandler {
   final Map<String,SimulatorWrapper> container = {};
 
   int counter = 0;
-  final Random random = Random();
 
 //  MQTT /////////////////////////////////////////////////////////////////
   MqttServerClient? client;
@@ -72,21 +71,31 @@ EMQX: _server = 'broker.emqx.io'
   final Queue<Map>	queue	= Queue<Map>();
   final List<String> deletedObjectsList = [];
 
+  Timer? _reconnectTimer;
+  bool _serviceStopped = true;
+
+  SendPort? _sendPort;
+
 //  MQTT /////////////////////////////////////////////////////////////////
 
   @override
   void onStart(DateTime timestamp, SendPort? sendPort) async {
-    //_sendPort = sendPort;
     print('Foreground service started');
-    // Send initial data
-    sendPort?.send({
-      'response': 'counter',
-      'value': counter,
-    });
+    _serviceStopped = false;
+    _sendPort = sendPort;
+    await initializeMqttClient(sendPort);
+  }
 
+  Future<void> initializeMqttClient(SendPort? sendPort) async {
+    // Send initial data
     sendPort?.send({
       'response': 'progress',
       'value': true,
+    });
+
+    sendPort?.send({
+      'response': 'counter',
+      'value': counter,
     });
 
     client = MqttServerClient(_server, _flutterClient);
@@ -99,6 +108,7 @@ EMQX: _server = 'broker.emqx.io'
     client?.onConnected = onConnected;
     client?.onSubscribed = onSubscribed;
     client?.onUnsubscribed = onUnsubscribed;
+    client?.autoReconnect = false;
 
     final connMess = MqttConnectMessage()
         .withClientIdentifier(_flutterClient)
@@ -114,44 +124,46 @@ EMQX: _server = 'broker.emqx.io'
         'response': 'progress',
         'value': false,
       });
-
+      scheduleReconnect();
     }
 
     // Subscribe to topic
     if (client?.connectionStatus!.state == MqttConnectionState.connected) {
       client?.subscribe(_topic, MqttQos.atLeastOnce);
-
-      print ('subscribe was done');
-
       client?.updates?.listen((List<MqttReceivedMessage<MqttMessage>> c) {
         final recMessage = c[0].payload as MqttPublishMessage;
-        final payload = MqttPublishPayload.bytesToStringAsString(recMessage.payload.message);
+        final payload = MqttPublishPayload.bytesToStringAsString(
+            recMessage.payload.message);
         String message = payload;
         //print('Received message: $payload from topic: ${c[0].topic}');
         if (!isDataFromDeletedObject(message)) {
           queue.add({'response': 'sync', 'value': message,});
         }
       });
-
-      // sendPort?.send({
-      //   'response': 'progress',
-      //   'value': false,
-      // });
-
     }
+  }
 
+  void scheduleReconnect() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(const Duration(seconds: 5), () async {
+      print('******* Attempting to reconnect... *******');
+      await initializeMqttClient(_sendPort);
+    });
   }
 
   void onConnected() {
     print('******* onConnected: onConnectedConnected to MQTT broker  $_server *******');
     queue.add({'response': 'Connected', 'value': 'Connected to MQTT broker $_server',});
-    //queue.add({'response': 'progress', 'value': true });
   }
 
   void onDisconnected() {
     print('******* onDisconnected: Disconnected from MQTT broker $_server *******');
     queue.add({'response': 'Disconnected', 'value': 'Disconnected from MQTT broker $_server',});
     queue.add({'response': 'progress', 'value': false });
+    if (_serviceStopped) {
+      return;
+    }
+    scheduleReconnect();
   }
 
   void onSubscribed(String topic) {
@@ -163,10 +175,15 @@ EMQX: _server = 'broker.emqx.io'
   void onUnsubscribed(String? topic) {
     print('***!*** onUnsubscribed from topic: $topic ***!***');
     queue.add({'response': 'Unsubscribed', 'value': 'Unsubscribed from topic: $topic'});
+    client?.disconnect();
+    scheduleReconnect();
   }
 
   @override
   void onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
+
+    _sendPort = sendPort;
+
     counter++;
     // Update notification
     await FlutterForegroundTask.updateService(
@@ -209,6 +226,7 @@ EMQX: _server = 'broker.emqx.io'
   @override
   void onDestroy(DateTime timestamp, SendPort? sendPort) async {
     print('Foreground service stopped');
+    _serviceStopped = true;
     client?.disconnect();
     sendPort?.send({
       'response': 'progress',
@@ -361,22 +379,6 @@ EMQX: _server = 'broker.emqx.io'
     }
     return result;
   }
-
-  // void updateTime(Map data) {
-  //   if (data.containsKey('response') && data.containsKey('value')) {
-  //     String command = data['response'] as String;
-  //     if (command != 'sync') {
-  //       return;
-  //     }
-  //     String jsonString = data['value'] as String;
-  //     DataPacket targetDataPacket = DataPacket.empty().decode(jsonString);
-  //     String id = targetDataPacket.sensorId;
-  //     SimulatorWrapper? wrapper = get(id);
-  //     if (wrapper != null) {
-  //         wrapper.updateTime();
-  //     }
-  //   }
-  // }
 
   bool isDataFromDeletedObject(String dataPacket) {
     DataPacket targetDataPacket = DataPacket.empty().decode(dataPacket);
