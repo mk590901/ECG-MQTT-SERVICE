@@ -24,15 +24,15 @@ In the context of the current application, the service provides:
 * Subscription to a topic and receiving data via the network
 * Sending data to the network via MQTT publish
 * Automatic connection recovery when the subscription is terminated or disconnected.
-* Responsible for the life cycle of__ SimulatorWrapper__ objects that generate ECG signals.
+* Responsible for the life cycle of __SimulatorWrapper__ objects that generate ECG signals.
 
 Should be noted that items in the application list can be of two types: internal generators and external signal sources of the same application, but running on another device. This difference can be observed by a special ECG signal label containing the name of this device.
 
-In this case, the movie shows the presence of ECG signals from two phones: Google Pixel 8 and LGE LM-810 (LG G8 ThinQ).
+In this case, the movie shows the presence of __ECG__ signals from two phones: __Google Pixel 8__ and __LGE LM-810 (LG G8 ThinQ)__.
 
 ## Movie
 
-The movie below shows the application's operation: can add an __ECG__ signal source, remove it from the list temporarily or permanently, and also close the application without deleting the service, and re-open the application via the __notification widget__ and continue working.
+The movie below shows the application's operation: can add an __ECG__ signal source, remove it from the list temporarily or permanently, and show __ECG__ signals running on other phones.
 
 https://github.com/user-attachments/assets/bf1ee9d3-0cd7-453a-bc3f-90ae3a499e4f
 
